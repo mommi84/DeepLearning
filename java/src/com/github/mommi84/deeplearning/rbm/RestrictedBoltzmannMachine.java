@@ -1,6 +1,8 @@
+package com.github.mommi84.deeplearning.rbm;
+
 import java.util.Random;
 
-public class RBM {
+public class RestrictedBoltzmannMachine {
 	public int N;
 	public int n_visible;
 	public int n_hidden;
@@ -32,7 +34,7 @@ public class RBM {
 	}
 	
 	
-	public RBM(int N, int n_visible, int n_hidden, 
+	public RestrictedBoltzmannMachine(int N, int n_visible, int n_hidden, 
 			double[][] W, double[] hbias, double[] vbias, Random rng) {
 		this.N = N;
 		this.n_visible = n_visible;
@@ -188,7 +190,7 @@ public class RBM {
 
 		
 		
-		RBM rbm = new RBM(train_N, n_visible, n_hidden, null, null, null, rng);
+		RestrictedBoltzmannMachine rbm = new RestrictedBoltzmannMachine(train_N, n_visible, n_hidden, null, null, null, rng);
 
 		// train
 		for(int epoch=0; epoch<training_epochs; epoch++) {

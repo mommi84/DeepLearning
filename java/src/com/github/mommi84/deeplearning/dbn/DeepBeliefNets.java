@@ -1,13 +1,15 @@
+package com.github.mommi84.deeplearning.dbn;
+
 import java.util.Random;
 
-public class DBN {
+public class DeepBeliefNets {
 	public int N;
 	public int n_ins;
 	public int[] hidden_layer_sizes;
 	public int n_outs;
 	public int n_layers;
 	public HiddenLayer[] sigmoid_layers;
-	public RBM[] rbm_layers;
+	public RestrictedBoltzmannMachine[] rbm_layers;
 	public LogisticRegression log_layer;
 	public Random rng;
 
@@ -16,7 +18,7 @@ public class DBN {
 	}
 	
 	
-	public DBN(int N, int n_ins, int[] hidden_layer_sizes, int n_outs, int n_layers, Random rng) {
+	public DeepBeliefNets(int N, int n_ins, int[] hidden_layer_sizes, int n_outs, int n_layers, Random rng) {
 		int input_size;
 		
 		this.N = N;
@@ -26,7 +28,7 @@ public class DBN {
 		this.n_layers = n_layers;
 		
 		this.sigmoid_layers = new HiddenLayer[n_layers];
-		this.rbm_layers = new RBM[n_layers];
+		this.rbm_layers = new RestrictedBoltzmannMachine[n_layers];
 
 		if(rng == null)	this.rng = new Random(1234);
 		else this.rng = rng;		
@@ -43,7 +45,7 @@ public class DBN {
 			this.sigmoid_layers[i] = new HiddenLayer(this.N, input_size, this.hidden_layer_sizes[i], null, null, rng);
 			
 			// construct rbm_layer
-			this.rbm_layers[i] = new RBM(this.N, input_size, this.hidden_layer_sizes[i], this.sigmoid_layers[i].W, this.sigmoid_layers[i].b, null, rng);
+			this.rbm_layers[i] = new RestrictedBoltzmannMachine(this.N, input_size, this.hidden_layer_sizes[i], this.sigmoid_layers[i].W, this.sigmoid_layers[i].b, null, rng);
 		}
 		
 		// layer for output using LogisticRegression
@@ -188,7 +190,7 @@ public class DBN {
 		
 		
 		// construct DBN
-		DBN dbn = new DBN(train_N, n_ins, hidden_layer_sizes, n_outs, n_layers, rng);
+		DeepBeliefNets dbn = new DeepBeliefNets(train_N, n_ins, hidden_layer_sizes, n_outs, n_layers, rng);
 		
 		// pretrain
 		dbn.pretrain(train_X, pretrain_lr, k, pretraining_epochs);

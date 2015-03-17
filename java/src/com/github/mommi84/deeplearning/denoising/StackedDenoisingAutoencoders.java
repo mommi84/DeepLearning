@@ -1,13 +1,15 @@
+package com.github.mommi84.deeplearning.denoising;
+
 import java.util.Random;
 
-public class SdA {
+public class StackedDenoisingAutoencoders {
 	public int N;
 	public int n_ins;
 	public int[] hidden_layer_sizes;
 	public int n_outs;
 	public int n_layers;
 	public HiddenLayer[] sigmoid_layers;
-	public dA[] dA_layers;
+	public DenoisingAutoencodersLayer[] dA_layers;
 	public LogisticRegression log_layer;
 	public Random rng;
 
@@ -15,7 +17,7 @@ public class SdA {
 		return 1.0 / (1.0 + Math.pow(Math.E, -x));
 	}
 	
-	public SdA(int N, int n_ins, int[] hidden_layer_sizes, int n_outs, int n_layers, Random rng) {
+	public StackedDenoisingAutoencoders(int N, int n_ins, int[] hidden_layer_sizes, int n_outs, int n_layers, Random rng) {
 		int input_size;
 		
 		this.N = N;
@@ -25,7 +27,7 @@ public class SdA {
 		this.n_layers = n_layers;
 		
 		this.sigmoid_layers = new HiddenLayer[n_layers];
-		this.dA_layers = new dA[n_layers];
+		this.dA_layers = new DenoisingAutoencodersLayer[n_layers];
 
 		if(rng == null)	this.rng = new Random(1234);
 		else this.rng = rng;		
@@ -42,7 +44,7 @@ public class SdA {
 			this.sigmoid_layers[i] = new HiddenLayer(this.N, input_size, this.hidden_layer_sizes[i], null, null, rng);
 			
 			// construct dA_layer
-			this.dA_layers[i] = new dA(this.N, input_size, this.hidden_layer_sizes[i], this.sigmoid_layers[i].W, this.sigmoid_layers[i].b, null, rng);
+			this.dA_layers[i] = new DenoisingAutoencodersLayer(this.N, input_size, this.hidden_layer_sizes[i], this.sigmoid_layers[i].W, this.sigmoid_layers[i].b, null, rng);
 		}
 		
 		// layer for output using LogisticRegression
@@ -195,7 +197,7 @@ public class SdA {
 		};
 		
 		// construct SdA
-		SdA sda = new SdA(train_N, n_ins, hidden_layer_sizes, n_outs, n_layers, rng);
+		StackedDenoisingAutoencoders sda = new StackedDenoisingAutoencoders(train_N, n_ins, hidden_layer_sizes, n_outs, n_layers, rng);
 		
 		// pretrain
 		sda.pretrain(train_X, pretrain_lr, corruption_level, pretraining_epochs);

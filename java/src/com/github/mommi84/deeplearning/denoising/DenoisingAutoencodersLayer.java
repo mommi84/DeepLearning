@@ -1,6 +1,8 @@
+package com.github.mommi84.deeplearning.denoising;
+
 import java.util.Random;
 
-public class dA {
+public class DenoisingAutoencodersLayer {
 	public int N;
 	public int n_visible;
 	public int n_hidden;
@@ -32,7 +34,7 @@ public class dA {
 		return 1.0 / (1.0 + Math.pow(Math.E, -x));
 	}
 
-	public dA(int N, int n_visible, int n_hidden, 
+	public DenoisingAutoencodersLayer(int N, int n_visible, int n_hidden, 
 			double[][] W, double[] hbias, double[] vbias, Random rng) {
 		this.N = N;
 		this.n_visible = n_visible;

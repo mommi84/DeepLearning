@@ -1,3 +1,5 @@
+package com.github.mommi84.deeplearning.logistic;
+
 
 public class LogisticRegression {
 	public int N;

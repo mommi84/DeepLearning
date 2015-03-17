@@ -1,3 +1,5 @@
+package com.github.mommi84.deeplearning.denoising;
+
 import java.util.Random;
 
 public class HiddenLayer {
