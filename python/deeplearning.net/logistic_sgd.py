@@ -109,7 +109,7 @@ class LogisticRegression(object):
         # parameters of the model
         self.params = [self.W, self.b]
 
-    def negative_log_likelihood(self, y):
+    def negative_log_likelihood(self, y, bs):
         """Return the mean of the negative log-likelihood of the prediction
         of this model under a given target distribution.
 
@@ -138,7 +138,8 @@ class LogisticRegression(object):
         # LP[n-1,y[n-1]]] and T.mean(LP[T.arange(y.shape[0]),y]) is
         # the mean (across minibatch examples) of the elements in v,
         # i.e., the mean log-likelihood across the minibatch.
-        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+        return -T.mean(T.log(self.p_y_given_x)[range(1,bs), y])
+        #return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
         # end-snippet-2
 
     def errors(self, y):
@@ -163,7 +164,13 @@ class LogisticRegression(object):
             # represents a mistake in prediction
             return T.mean(T.neq(self.y_pred, y))
         else:
-            raise NotImplementedError()
+            #raise NotImplementedError()
+#            print y.shape[0]
+#            for i in range(1, y.shape[0].eval()):
+#                print('%f | %f' % (self.y_pred[i], y[i]))
+            #print T.mean(T.neq(self.y_pred, y))
+            #print self.y_pred.eval()
+            return T.mean(T.neq(self.y_pred, y))
 
 
 def load_data(dataset):

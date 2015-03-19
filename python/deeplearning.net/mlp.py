@@ -224,17 +224,20 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 #    datasets = load_data(dataset)
 
     from numpy import genfromtxt
-    my_data = genfromtxt('throughput-0to1.csv', delimiter=',')
+    train_data = genfromtxt('thro-train.csv', delimiter=',')
+    valid_data = genfromtxt('thro-valid.csv', delimiter=',')
+    test_data = genfromtxt('thro-test.csv', delimiter=',')
 
     borrow = True
 
-    train_set_x = theano.shared(numpy.asarray(my_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
-    train_set_y = theano.shared(numpy.asarray(my_data[:,4], dtype=theano.config.floatX),borrow=borrow)
-    valid_set_x = theano.shared(numpy.asarray(my_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
-    valid_set_y = theano.shared(numpy.asarray(my_data[:,4], dtype=theano.config.floatX),borrow=borrow)
-    test_set_x = theano.shared(numpy.asarray(my_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
-    test_set_y = theano.shared(numpy.asarray(my_data[:,4], dtype=theano.config.floatX),borrow=borrow)
+    train_set_x = theano.shared(numpy.asarray(train_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
+    train_set_y = theano.shared(numpy.asarray(train_data[:,4], dtype=theano.config.floatX),borrow=borrow)
+    valid_set_x = theano.shared(numpy.asarray(valid_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
+    valid_set_y = theano.shared(numpy.asarray(valid_data[:,4], dtype=theano.config.floatX),borrow=borrow)
+    test_set_x = theano.shared(numpy.asarray(test_data[:,0:4], dtype=theano.config.floatX),borrow=borrow)
+    test_set_y = theano.shared(numpy.asarray(test_data[:,4], dtype=theano.config.floatX),borrow=borrow)
     
+    print train_set_x.eval()
 #    train_set_x, train_set_y = datasets[0]
 #    valid_set_x, valid_set_y = datasets[1]
 #    test_set_x, test_set_y = datasets[2]
@@ -251,8 +254,8 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
-    x = T.matrix('x')  # the data is presented as rasterized images
-    y = T.vector('y')  # the labels are presented as 1D vector of
+    x = T.dmatrix('x')  # the data is presented as rasterized images
+    y = T.dvector('y')  # the labels are presented as 1D vector of
                         # [int] labels
 
     rng = numpy.random.RandomState(1234)
@@ -271,7 +274,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # the model plus the regularization terms (L1 and L2); cost is expressed
     # here symbolically
     cost = (
-        0 #classifier.negative_log_likelihood(y)
+        classifier.negative_log_likelihood(y, batch_size)
         + L1_reg * classifier.L1
         + L2_reg * classifier.L2_sqr
     )
@@ -281,22 +284,20 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # by the model on a minibatch
     test_model = theano.function(
         inputs=[index],
-        outputs=[], #classifier.errors(y),
+        outputs=classifier.errors(y),
         givens={
             x: test_set_x[index * batch_size:(index + 1) * batch_size],
             y: test_set_y[index * batch_size:(index + 1) * batch_size]
-        },
-	on_unused_input='warn'
+        }
     )
 
     validate_model = theano.function(
         inputs=[index],
-        outputs=[], #classifier.errors(y),
+        outputs=classifier.errors(y),
         givens={
             x: valid_set_x[index * batch_size:(index + 1) * batch_size],
             y: valid_set_y[index * batch_size:(index + 1) * batch_size]
-        },
-	on_unused_input='warn'
+        }
     )
 
     # start-snippet-5
@@ -327,8 +328,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
         givens={
             x: train_set_x[index * batch_size: (index + 1) * batch_size],
             y: train_set_y[index * batch_size: (index + 1) * batch_size]
-        },
-	on_unused_input='warn'
+        }
     )
     # end-snippet-5
 
@@ -371,15 +371,15 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                                      in xrange(n_valid_batches)]
                 this_validation_loss = numpy.mean(validation_losses)
 
-                print(
-                    'epoch %i, minibatch %i/%i, validation error %f %%' %
-                    (
-                        epoch,
-                        minibatch_index + 1,
-                        n_train_batches,
-                        this_validation_loss * 100.
-                    )
-                )
+#                print(
+#                    'epoch %i, minibatch %i/%i, validation error %f %%' %
+#                    (
+#                        epoch,
+#                        minibatch_index + 1,
+#                        n_train_batches,
+#                        this_validation_loss * 100.
+#                    )
+#                )
 
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
