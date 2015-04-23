@@ -12,7 +12,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.github.mommi84.deeplearning.dbn.DeepBeliefNetsMod;
 
 /**
- * @author Tommaso Soru <t.soru@informatik.uni-leipzig.de>
+ * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class ZeroToOneValues {
